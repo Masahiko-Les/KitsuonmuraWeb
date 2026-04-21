@@ -1,0 +1,24 @@
+.square-header {
+  text-align: center;
+  padding: 20px 16px 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.square-header h1 {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.square-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.square-main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}

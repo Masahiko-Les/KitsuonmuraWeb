@@ -1,0 +1,55 @@
+.account-header {
+  text-align: center;
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.account-header h1 {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.account-main {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.account-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.account-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.account-row:last-child {
+  border-bottom: none;
+}
+
+.account-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: bold;
+  min-width: 96px;
+  padding-top: 2px;
+}
+
+.account-value {
+  font-size: 15px;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.account-email {
+  font-size: 13px;
+}

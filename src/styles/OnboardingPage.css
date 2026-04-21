@@ -1,0 +1,67 @@
+.onboarding-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  background: linear-gradient(160deg, #fdf6ee 0%, #f5e9d8 100%);
+}
+
+.onboarding-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.onboarding-title {
+  text-align: center;
+  font-size: 22px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.onboarding-desc {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.terms-section {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.terms-link {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--color-primary);
+  text-decoration: underline;
+  padding: 8px 0;
+}
+
+.agree-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.agree-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}

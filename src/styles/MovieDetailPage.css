@@ -1,0 +1,218 @@
+.movie-detail-header {
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.movie-detail-title-area {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 10px 0 8px;
+}
+
+.movie-detail-emoji {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.movie-detail-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.movie-detail-original {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.movie-detail-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.movie-detail-main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.open-form-btn {
+  width: 100%;
+}
+
+/* 投稿フォーム（BookDetailPage.css と共通構造） */
+.review-form {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.review-form-title {
+  font-size: 16px;
+  color: var(--color-text);
+  margin-bottom: -4px;
+}
+
+.review-form .form-group {
+  margin-bottom: 0;
+}
+
+.review-form textarea {
+  width: 100%;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  resize: none;
+  outline: none;
+  transition: border 0.2s;
+  line-height: 1.7;
+}
+
+.review-form textarea:focus {
+  border-color: var(--color-primary);
+  background: #fff;
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.char-count.over {
+  color: var(--color-danger);
+  font-weight: bold;
+}
+
+.review-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 8px 18px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+/* レビュー一覧 */
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reviews-title {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  font-weight: bold;
+}
+
+.reviews-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 2;
+}
+
+.review-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.review-author {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.review-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.review-section-label {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: bold;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.review-quote blockquote {
+  margin: 0;
+  padding: 10px 14px;
+  background: #f8f3ee;
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.review-feeling p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.review-delete-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}

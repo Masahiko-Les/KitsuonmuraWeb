@@ -1,0 +1,90 @@
+.post-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.post-author {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.post-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.post-text {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 4px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+}
+
+.like-btn:hover:not(:disabled) {
+  border-color: var(--color-liked);
+  color: var(--color-liked);
+}
+
+.like-btn.liked {
+  border-color: var(--color-liked);
+  color: var(--color-liked);
+  background: #fff0f0;
+}
+
+.delete-btn {
+  color: var(--color-danger);
+  border-color: transparent;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background: #fff0f0;
+}
+
+.report-btn {
+  font-size: 12px;
+  border-color: transparent;
+}
+
+.report-btn:hover:not(:disabled) {
+  background: #fff8f0;
+  color: var(--color-primary);
+}
+
+.report-btn.reported {
+  color: #ccc;
+  border-color: transparent;
+  cursor: default;
+}

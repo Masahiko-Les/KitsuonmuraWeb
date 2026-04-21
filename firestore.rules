@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ログイン済みかどうかを確認するヘルパー
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // 本人かどうかを確認するヘルパー
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    // ========== users ==========
+    match /users/{uid} {
+      // 1件取得（get）は本人のみ
+      allow get: if isSignedIn() && isOwner(uid);
+
+      // コレクションクエリ（list）はログイン済みなら許可
+      // → getVillageStats() の集計クエリに必要
+      allow list: if isSignedIn();
+
+      allow create: if isSignedIn() && isOwner(uid)
+        && request.resource.data.keys().hasAll(['email', 'nickname', 'agreedToTerms', 'createdAt']);
+      allow update: if isSignedIn() && isOwner(uid)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email']);
+    }
+
+    // ========== posts ==========
+    match /posts/{postId} {
+      // ログインユーザーは非表示でない投稿を読める
+      allow read: if isSignedIn();
+
+      // 投稿作成：必須フィールドの存在チェック・初期値の強制
+      allow create: if isSignedIn()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 200
+        && request.resource.data.likeCount == 0
+        && request.resource.data.reportCount == 0
+        && request.resource.data.isHidden == false;
+
+      // 投稿削除：本人のみ
+      allow delete: if isSignedIn()
+        && resource.data.authorUid == request.auth.uid;
+
+      // 投稿更新：likeCount / reportCount / isHidden のみ更新を許可
+      // （直接 count を好き勝手に変えられないよう制限）
+      allow update: if isSignedIn()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['likeCount', 'reportCount', 'isHidden'])
+        // テキストや authorUid は変更不可
+        && request.resource.data.text == resource.data.text
+        && request.resource.data.authorUid == resource.data.authorUid;
+    }
+
+    // ========== postLikes ==========
+    // ドキュメントID = postId_uid 形式
+    match /postLikes/{likeId} {
+      allow read: if isSignedIn();
+
+      // 自分のいいねのみ作成可
+      allow create: if isSignedIn()
+        && request.resource.data.userUid == request.auth.uid
+        && likeId == request.resource.data.postId + '_' + request.auth.uid;
+
+      // 自分のいいねのみ削除可
+      allow delete: if isSignedIn()
+        && resource.data.userUid == request.auth.uid;
+    }
+
+    // ========== postReports ==========
+    // ドキュメントID = postId_uid 形式
+    match /postReports/{reportId} {
+      allow read: if isSignedIn();
+
+      // 自分の通報のみ作成可（1回のみ = ドキュメントが既存なら create 不可）
+      allow create: if isSignedIn()
+        && request.resource.data.userUid == request.auth.uid
+        && reportId == request.resource.data.postId + '_' + request.auth.uid;
+
+      // 通報は削除不可（管理者作業として手動処理）
+      allow delete: if false;
+    }
+
+    // ========== bookReviews ==========
+    match /bookReviews/{reviewId} {
+      // ログインユーザーは全件読める
+      allow read: if isSignedIn();
+
+      // 投稿：本人の uid が authorUid に入っている場合のみ
+      allow create: if isSignedIn()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.bookId is string
+        && (request.resource.data.quote.size() <= 1000)
+        && (request.resource.data.feeling.size() <= 1000);
+
+      // 削除：投稿者本人のみ
+      allow delete: if isSignedIn()
+        && resource.data.authorUid == request.auth.uid;
+    }
+
+    // ========== movieReviews ==========
+    match /movieReviews/{reviewId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.movieId is string
+        && (request.resource.data.scene.size() <= 1000)
+        && (request.resource.data.feeling.size() <= 1000);
+
+      allow delete: if isSignedIn()
+        && resource.data.authorUid == request.auth.uid;
+    }
+
+    // ========== selfEsteemStocks ==========
+    // 自分しか読み書きできない（他人には見えない）
+    match /selfEsteemStocks/{stockId} {
+      // 読み取り・削除は本人のみ
+      allow read, delete: if isSignedIn()
+        && resource.data.authorUid == request.auth.uid;
+
+      // 作成は本人分のみ・文字数制限
+      allow create: if isSignedIn()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 200;
+    }
+  }
+}

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- 空 -->
+  <rect width="800" height="600" fill="#d4e8c2"/>
+
+  <!-- 地面 -->
+  <ellipse cx="400" cy="520" rx="360" ry="80" fill="#c8b89a" opacity="0.6"/>
+
+  <!-- 広場（中央） -->
+  <ellipse cx="360" cy="340" rx="80" ry="50" fill="#e8dcc8"/>
+  <circle cx="360" cy="300" r="8" fill="#c8956c"/>
+  <!-- 木 -->
+  <rect x="240" y="260" width="12" height="40" fill="#8a7060" rx="3"/>
+  <circle cx="246" cy="252" r="24" fill="#7aab6a" opacity="0.9"/>
+  <rect x="490" y="270" width="10" height="36" fill="#8a7060" rx="3"/>
+  <circle cx="495" cy="262" r="20" fill="#7aab6a" opacity="0.9"/>
+
+  <!-- 図書館（左上） -->
+  <rect x="80" y="120" width="100" height="70" fill="#c8b09a" rx="6"/>
+  <polygon points="80,120 130,80 180,120" fill="#b89080"/>
+  <rect x="108" y="145" width="22" height="45" fill="#9a7060"/>
+
+  <!-- 映画館（右上） -->
+  <rect x="600" y="100" width="120" height="80" fill="#a8b0c8" rx="6"/>
+  <polygon points="600,100 660,60 720,100" fill="#8890b0"/>
+  <rect x="618" y="130" width="84" height="10" fill="#fff" opacity="0.5" rx="2"/>
+  <rect x="618" y="148" width="84" height="10" fill="#fff" opacity="0.5" rx="2"/>
+
+  <!-- 砂漠エリア（右下） -->
+  <ellipse cx="620" cy="450" rx="120" ry="60" fill="#e8c87a" opacity="0.7"/>
+  <polygon points="590,420 605,380 620,420" fill="#d4a840" opacity="0.8"/>
+  <polygon points="630,430 648,385 665,430" fill="#d4a840" opacity="0.8"/>
+
+  <!-- 道 -->
+  <path d="M 360 340 Q 200 380 100 430" stroke="#d4c0a0" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M 360 340 Q 520 380 680 440" stroke="#d4c0a0" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M 200 200 Q 280 260 360 340" stroke="#d4c0a0" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M 600 200 Q 500 270 360 340" stroke="#d4c0a0" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- タイトル -->
+  <text x="400" y="50" text-anchor="middle" font-family="serif" font-size="28" fill="#4a3728" opacity="0.6">吃音村</text>
+  <text x="400" y="78" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#8a7060">〜 あなたの声が、ここにある 〜</text>
+</svg>
