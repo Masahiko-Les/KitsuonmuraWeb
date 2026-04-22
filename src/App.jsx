@@ -11,7 +11,13 @@ import LibraryPage from './pages/LibraryPage';
 import BookDetailPage from './pages/BookDetailPage';
 import CinemaPage from './pages/CinemaPage';
 import MovieDetailPage from './pages/MovieDetailPage';
-import DesertPage from './pages/DesertPage';
+import DesertHomePage from './pages/DesertHomePage';
+import DesertStoryListPage from './pages/DesertStoryListPage';
+import DesertStoryDetailPage from './pages/DesertStoryDetailPage';
+import DesertStoryCreatePage from './pages/DesertStoryCreatePage';
+import DesertStoryPreviewPage from './pages/DesertStoryPreviewPage';
+import DesertMyStoriesPage from './pages/DesertMyStoriesPage';
+import DesertFavoritesPage from './pages/DesertFavoritesPage';
 import HomePage from './pages/HomePage';
 
 const App = () => (
@@ -54,9 +60,34 @@ const App = () => (
           element={<ProtectedRoute><MovieDetailPage /></ProtectedRoute>}
         />
 
+        {/* 砂漠の開拓 */}
         <Route
           path="/desert"
-          element={<ProtectedRoute><DesertPage /></ProtectedRoute>}
+          element={<ProtectedRoute><DesertHomePage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/stories"
+          element={<ProtectedRoute><DesertStoryListPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/stories/:storyId"
+          element={<ProtectedRoute><DesertStoryDetailPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/create"
+          element={<ProtectedRoute><DesertStoryCreatePage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/preview"
+          element={<ProtectedRoute><DesertStoryPreviewPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/my-stories"
+          element={<ProtectedRoute><DesertMyStoriesPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/desert/favorites"
+          element={<ProtectedRoute><DesertFavoritesPage /></ProtectedRoute>}
         />
         <Route
           path="/home"

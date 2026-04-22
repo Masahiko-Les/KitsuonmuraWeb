@@ -1,0 +1,753 @@
+/* ==========================================
+   砂漠の開拓 — スタイル
+   ========================================== */
+
+/* ── ヘッダー ── */
+.desert-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.desert-back-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 0;
+  align-self: flex-start;
+  margin-bottom: 2px;
+}
+
+.desert-title {
+  font-size: 20px;
+  color: var(--color-primary);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.desert-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── ホームページ ── */
+.desert-home-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px 32px;
+  gap: 28px;
+}
+
+.desert-hero {
+  text-align: center;
+  padding: 20px 8px;
+}
+
+.desert-hero-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+}
+
+.desert-hero-text {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 2;
+  margin-bottom: 10px;
+}
+
+.desert-hero-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.9;
+}
+
+.desert-home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desert-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.desert-home-btn:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow);
+}
+
+.desert-home-btn--primary {
+  background-color: #fff8f2;
+  border-color: var(--color-primary);
+}
+
+.desert-home-btn__icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.desert-home-btn__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.desert-home-btn__text strong {
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.desert-home-btn__text small {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ── 成長バッジ ── */
+.desert-growth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.desert-growth-badge--seed {
+  background: #f5f0e8;
+  color: #8a7060;
+}
+
+.desert-growth-badge--sprout {
+  background: #edf7ee;
+  color: #4a8a52;
+}
+
+.desert-growth-badge--bud {
+  background: #e8f4e8;
+  color: #3a7a42;
+}
+
+.desert-growth-badge--flower {
+  background: #fff0f5;
+  color: #d06080;
+}
+
+/* ── ストーリーカード ── */
+.desert-story-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desert-story-card {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  outline: none;
+}
+
+.desert-story-card:hover,
+.desert-story-card:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow);
+}
+
+.desert-story-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.desert-story-card__date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.desert-story-card__title {
+  font-size: 16px;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.desert-story-card__preview {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.desert-story-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.desert-story-card__author {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.desert-story-card__water {
+  font-size: 12px;
+  color: #5a9abf;
+}
+
+/* ── 自分の物語カード ── */
+.desert-my-story-card {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.desert-my-story-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.desert-my-story-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+.desert-my-story-card__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.desert-status-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  background: #f0ebe4;
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+
+/* ── 詳細ページ ── */
+.desert-detail-main {
+  flex: 1;
+  padding: 20px 16px 32px;
+}
+
+.desert-detail-hero {
+  margin-bottom: 24px;
+}
+
+.desert-detail-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.desert-detail-title {
+  font-size: 21px;
+  color: var(--color-text);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.desert-detail-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.desert-detail-section {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.desert-detail-section:last-of-type {
+  border-bottom: none;
+}
+
+.desert-detail-section__label {
+  font-size: 13px;
+  color: var(--color-primary);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.desert-detail-section__text {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 2;
+  white-space: pre-wrap;
+}
+
+.desert-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.desert-owner-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.desert-status-badge--hidden {
+  display: inline-block;
+  background: #f5e8e8;
+  color: var(--color-danger);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11px;
+}
+
+/* ── 水やりボタン ── */
+.desert-water-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-bg-card);
+  border: 1.5px solid #a8d4e8;
+  border-radius: var(--radius-lg);
+  padding: 11px 20px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #4a8aaf;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.desert-water-btn:hover:not(:disabled) {
+  background: #f0f8ff;
+  border-color: #5a9abf;
+}
+
+.desert-water-btn--active {
+  background: #e8f4fa;
+  border-color: #5a9abf;
+  color: #3a7a9f;
+}
+
+.desert-water-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.desert-water-btn__icon {
+  font-size: 16px;
+}
+
+.desert-water-btn__label {
+  font-size: 14px;
+}
+
+.desert-water-count {
+  font-size: 13px;
+  background: #d8eef7;
+  border-radius: 10px;
+  padding: 1px 8px;
+  color: #3a7a9f;
+}
+
+/* ── お気に入りボタン ── */
+.desert-fav-btn {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.desert-fav-btn:hover:not(:disabled) {
+  border-color: #c8a040;
+  color: #c8a040;
+}
+
+.desert-fav-btn--active {
+  background: #fffbee;
+  border-color: #c8a040;
+  color: #b88a20;
+}
+
+/* ── セカンダリ・危険ボタン ── */
+.desert-secondary-btn {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex: 1;
+}
+
+.desert-secondary-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.desert-secondary-btn--sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  flex: unset;
+}
+
+.desert-danger-btn {
+  background: none;
+  border: 1.5px solid var(--color-danger);
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-danger);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex: 1;
+}
+
+.desert-danger-btn:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.desert-danger-btn--sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  flex: unset;
+}
+
+.desert-report-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 0;
+  align-self: flex-start;
+}
+
+.desert-report-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  text-decoration: none;
+}
+
+/* ── フォーム ── */
+.desert-create-main {
+  flex: 1;
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.desert-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.desert-field-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.desert-select {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--color-text);
+  outline: none;
+  width: 100%;
+  appearance: none;
+  cursor: pointer;
+}
+
+.desert-select:focus {
+  border-color: var(--color-primary);
+}
+
+.desert-textarea {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--color-text);
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  line-height: 1.9;
+  min-height: 200px;
+}
+
+.desert-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.desert-textarea--warn {
+  border-color: #e0a050;
+}
+
+.desert-textarea-wrap {
+  position: relative;
+}
+
+.desert-textarea-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.desert-textarea-count--warn {
+  color: #c08030;
+}
+
+.desert-create-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.desert-create-actions .btn-primary {
+  flex: 1;
+}
+
+/* ── 注意書きボックス ── */
+.desert-notice-box {
+  background: #fff8f2;
+  border: 1px solid #f0d8c0;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.desert-notice-box__title {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.desert-notice-box__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.desert-notice-box__list li {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.desert-notice-box__list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+/* ── プレビューページ ── */
+.desert-preview-main {
+  flex: 1;
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.desert-preview-card {
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.desert-preview-title {
+  font-size: 19px;
+  color: var(--color-text);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.desert-preview-char-count {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: right;
+  margin-top: 6px;
+}
+
+.desert-preview-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── 投稿完了画面 ── */
+.desert-published-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 16px;
+  text-align: center;
+}
+
+.desert-published-icon {
+  font-size: 52px;
+}
+
+.desert-published-title {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.desert-published-msg {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 2;
+  margin-bottom: 8px;
+}
+
+/* ── 一覧ページ共通 ── */
+.desert-list-main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── タブ ── */
+.desert-tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 16px;
+}
+
+.desert-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.desert-tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: bold;
+}
+
+/* ── 空状態 ── */
+.desert-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.9;
+  flex: 1;
+}
+
+.desert-empty__icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+/* ── ログイン促進 ── */
+.desert-login-prompt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  gap: 8px;
+}
+
+/* ── メッセージ ── */
+.desert-success-msg {
+  color: #4a8a52;
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 12px;
+  background: #eef8f0;
+  border-radius: var(--radius-sm);
+}
+
+.desert-error {
+  color: var(--color-danger);
+  font-size: 14px;
+  text-align: center;
+  padding: 16px;
+}
