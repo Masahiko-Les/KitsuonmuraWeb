@@ -1,6 +1,6 @@
 // 村マップコンポーネント：画像の上にボタンを absolute で重ねる構造
 import { useNavigate } from 'react-router-dom';
-import villageMap from '../assets/map.png';
+import villageMap from '../assets/map.jpg';
 import '../styles/VillageMap.css';
 
 // 施設を追加するときはこの配列に追記するだけ
