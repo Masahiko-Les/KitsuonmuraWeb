@@ -23,8 +23,14 @@ export const createOrMergeUserProfile = (uid, data) =>
   setDoc(doc(db, 'users', uid), data, { merge: true });
 
 // ログイン時に lastLoginAt を現在時刻で更新（他のフィールドは消さない）
-export const updateLastLoginAt = (uid) =>
-  setDoc(doc(db, 'users', uid), { lastLoginAt: serverTimestamp() }, { merge: true });
+// 初回ログイン時はまだドキュメントが存在しないためエラーを無視する
+export const updateLastLoginAt = async (uid) => {
+  try {
+    await setDoc(doc(db, 'users', uid), { lastLoginAt: serverTimestamp() }, { merge: true });
+  } catch {
+    // onboarding前はドキュメント未作成のため無視
+  }
+};
 
 // 村人人数を集計して返す
 // - totalVillagers  : agreedToTerms=true かつ nickname が存在するユーザー数

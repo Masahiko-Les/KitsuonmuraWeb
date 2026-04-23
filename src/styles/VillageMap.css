@@ -15,8 +15,7 @@
   display: block;
   width: 100%;
   height: auto;
-  /* 元画像の縦横比 2048x1365 を維持 */
-  aspect-ratio: 2048 / 1365;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
 }
 

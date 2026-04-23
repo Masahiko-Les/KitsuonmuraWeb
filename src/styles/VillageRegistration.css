@@ -1,0 +1,134 @@
+.vr-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px 48px;
+  background: linear-gradient(160deg, #fdf6ee 0%, #f5e9d8 100%);
+}
+
+.vr-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.vr-icon {
+  text-align: center;
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.vr-title {
+  text-align: center;
+  font-size: 22px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.vr-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.vr-desc {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* ニックネーム表示 */
+.vr-nickname-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff8f2;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+.vr-nickname-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.vr-nickname-value {
+  font-size: 15px;
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+/* フォーム */
+.vr-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.vr-select {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--color-text);
+  outline: none;
+  width: 100%;
+  appearance: none;
+  cursor: pointer;
+}
+
+.vr-select:focus {
+  border-color: var(--color-primary);
+}
+
+.vr-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+/* 発声しにくい音入力行 */
+.vr-sound-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.vr-sound-rank {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.vr-sound-input {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--color-text);
+  outline: none;
+  flex: 1;
+}
+
+.vr-sound-input:focus {
+  border-color: var(--color-primary);
+}

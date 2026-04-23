@@ -19,6 +19,8 @@ import DesertStoryPreviewPage from './pages/DesertStoryPreviewPage';
 import DesertMyStoriesPage from './pages/DesertMyStoriesPage';
 import DesertFavoritesPage from './pages/DesertFavoritesPage';
 import HomePage from './pages/HomePage';
+import VillageRegistrationPage from './pages/VillageRegistrationPage';
+import TownHallPage from './pages/TownHallPage';
 
 const App = () => (
   <AuthProvider>
@@ -29,6 +31,9 @@ const App = () => (
 
         {/* ログイン済みが前提のオンボーディング（ProtectedRoute外で独自処理） */}
         <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* 村人登録（ProtectedRouteの villageProfileCompleted チェック前に独自処理） */}
+        <Route path="/village-registration" element={<VillageRegistrationPage />} />
 
         {/* 保護されたページ（未ログイン・未オンボーディングはリダイレクト） */}
         <Route
@@ -92,6 +97,10 @@ const App = () => (
         <Route
           path="/home"
           element={<ProtectedRoute><HomePage /></ProtectedRoute>}
+        />
+        <Route
+          path="/town-hall"
+          element={<ProtectedRoute><TownHallPage /></ProtectedRoute>}
         />
 
         {/* その他のパスはトップへ */}

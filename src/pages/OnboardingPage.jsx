@@ -15,10 +15,14 @@ const OnboardingPage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  // すでにオンボーディング済みなら村マップへ
+  // オンボーディング済みなら次のステップへ
   useEffect(() => {
     if (!loading && userProfile?.nickname && userProfile?.agreedToTerms) {
-      navigate('/village', { replace: true });
+      if (userProfile.villageProfileCompleted) {
+        navigate('/village', { replace: true });
+      } else {
+        navigate('/village-registration', { replace: true });
+      }
     }
   }, [loading, userProfile, navigate]);
 
@@ -48,7 +52,7 @@ const OnboardingPage = () => {
         createdAt: new Date(),
       });
       await refreshProfile();
-      navigate('/village', { replace: true });
+      navigate('/village-registration', { replace: true });
     } catch (err) {
       console.error(err);
       setError('保存に失敗しました。もう一度お試しください');

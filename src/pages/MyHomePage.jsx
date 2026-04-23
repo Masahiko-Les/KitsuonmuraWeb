@@ -1,34 +1,64 @@
-// 自分の家（準備中）
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import BottomNav from '../components/BottomNav';
+import '../styles/MyHomePage.css';
 
 const MyHomePage = () => {
   const navigate = useNavigate();
   const { userProfile } = useAuth();
+  const v = userProfile;
+
   return (
     <div className="page-container">
-      <header style={{ textAlign: 'center', padding: '20px 16px 12px', borderBottom: '1px solid var(--color-border)' }}>
-        <button
-          onClick={() => navigate('/village')}
-          style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}
-        >
+      <header className="myhome-header">
+        <button className="myhome-back-btn" onClick={() => navigate('/village')}>
           ← 村へ戻る
         </button>
-        <h1 style={{ fontSize: '20px', color: 'var(--color-primary)', margin: '8px 0 4px' }}>自分の家</h1>
+        <h1 className="myhome-title">自分の家</h1>
       </header>
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', gap: '16px', textAlign: 'center' }}>
-        <p style={{ fontSize: '36px' }}>🏠</p>
-        {userProfile && (
-          <p style={{ fontSize: '15px', color: 'var(--color-text)' }}>
-            {userProfile.nickname} さんの家
-          </p>
+
+      <main className="myhome-main">
+        {v?.villageProfileCompleted ? (
+          <div className="villager-card">
+            <div className="villager-card__header">
+              <div className="villager-card__icon">🌱</div>
+              <div className="villager-card__name-block">
+                <span className="villager-card__nickname">{v.nickname}</span>
+                <span className="villager-card__no">{v.villagerNo}</span>
+              </div>
+            </div>
+            <hr className="villager-card__divider" />
+            <div className="villager-card__row">
+              <span className="villager-card__label">吃音タイプ</span>
+              <span className="villager-card__value">
+                {v.stutterType === 'その他' && v.stutterTypeOther
+                  ? `その他（${v.stutterTypeOther}）`
+                  : v.stutterType}
+              </span>
+            </div>
+            <div className="villager-card__row">
+              <span className="villager-card__label">発声しにくい音</span>
+              <div className="villager-card__sounds">
+                {v.difficultSoundsTop3?.map((s, i) => (
+                  <span key={i} className="villager-card__sound-badge">{s}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="myhome-no-profile">
+            <p className="myhome-no-profile__icon">📜</p>
+            <p className="myhome-no-profile__text">村人登録がまだ完了していません</p>
+            <button
+              className="btn-primary"
+              onClick={() => navigate('/village-registration')}
+            >
+              村人登録へ
+            </button>
+          </div>
         )}
-        <p style={{ fontSize: '14px', color: 'var(--color-text)', lineHeight: 1.8 }}>
-          ここはあなただけの場所になる予定です。
-        </p>
-        <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>準備中</p>
       </main>
+
       <BottomNav />
     </div>
   );

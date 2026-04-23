@@ -1,6 +1,6 @@
 // 村マップコンポーネント：画像の上にボタンを absolute で重ねる構造
 import { useNavigate } from 'react-router-dom';
-import villageMap from '../assets/village-map.png';
+import villageMap from '../assets/map.png';
 import '../styles/VillageMap.css';
 
 // 施設を追加するときはこの配列に追記するだけ
@@ -12,15 +12,16 @@ const FACILITIES = [
     path: '/square',
     enabled: true,
     spotClass: 'square-button',
-    position: { top: '57%', left: '49%' },
+    position: { top: '63%', left: '50%' },
   },
+
   {
     id: 'library',
     label: '図書館',
     path: '/library',
     enabled: true,
     spotClass: 'library-button',
-    position: { top: '30%', left: '60%' },
+    position: { top: '60%', left: '85%' },
   },
   {
     id: 'cinema',
@@ -28,7 +29,7 @@ const FACILITIES = [
     path: '/cinema',
     enabled: true,
     spotClass: 'cinema-button',
-    position: { top: '30%', left: '38%' },
+    position: { top: '40%', left: '42%' },
   },
   {
     id: 'desert',
@@ -37,7 +38,7 @@ const FACILITIES = [
     enabled: true,
     spotClass: 'desert-button',
     // マップ右上の砂漠エリア
-    position: { top: '18%', left: '85%' },
+    position: { top: '25%', left: '80%' },
   },
   {
     id: 'my-home',
@@ -46,7 +47,15 @@ const FACILITIES = [
     enabled: true,
     spotClass: 'my-home-button',
     // 広場の右のオレンジの家
-    position: { top: '50%', left: '78%' },
+    position: { top: '73%', left: '78%' },
+  },
+  {
+    id: 'town-hall',
+    label: '村役場',
+    path: '/town-hall',
+    enabled: true,
+    spotClass: 'town-hall-button',
+    position: { top: '40%', left: '63%' },
   },
   {
     id: 'lighthouse',
@@ -54,7 +63,7 @@ const FACILITIES = [
     path: null,
     enabled: false,
     spotClass: 'lighthouse-button',
-    position: { top: '50%', left: '21%' },
+    position: { top: '50%', left: '10%' },
   },
 ];
 

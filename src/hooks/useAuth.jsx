@@ -14,10 +14,13 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = observeAuthState(async (user) => {
       setCurrentUser(user);
       if (user) {
-        // アプリを開くたびに lastLoginAt を更新（セッション継続中も対応）
-        await updateLastLoginAt(user.uid);
-        const profile = await getUserProfile(user.uid);
-        setUserProfile(profile);
+        try {
+          await updateLastLoginAt(user.uid);
+          const profile = await getUserProfile(user.uid);
+          setUserProfile(profile);
+        } catch {
+          setUserProfile(null);
+        }
       } else {
         setUserProfile(null);
       }

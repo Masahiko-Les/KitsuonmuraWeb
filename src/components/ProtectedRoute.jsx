@@ -23,6 +23,11 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/onboarding" replace />;
   }
 
+  // 村人登録未完了 → 村人登録へ
+  if (!userProfile.villageProfileCompleted) {
+    return <Navigate to="/village-registration" replace />;
+  }
+
   return children;
 };
 
