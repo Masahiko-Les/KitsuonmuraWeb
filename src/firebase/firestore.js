@@ -1,270 +1,386 @@
-// Firestore に関する処理をまとめたファイル
-import {
-  doc,
-  getDoc,
-  setDoc,
-  addDoc,
-  deleteDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  serverTimestamp,
-  runTransaction,
-  increment,
-  Timestamp,
-} from 'firebase/firestore';
-import { db } from './config';
+// Supabase でデータベース操作を実装（Firestore からの移行）
+// エクスポートする関数名は変えていないので他ファイルのインポートは変更不要
+import { supabase } from '../supabase/client';
 
-// ユーザープロフィールの作成・更新（mergeで既存データを保持）
-export const createOrMergeUserProfile = (uid, data) =>
-  setDoc(doc(db, 'users', uid), data, { merge: true });
+// ============================================================
+// ユーザープロフィール
+// ============================================================
 
-// ログイン時に lastLoginAt を現在時刻で更新（他のフィールドは消さない）
-// 初回ログイン時はまだドキュメントが存在しないためエラーを無視する
+const mapUser = (row) => ({
+  uid: row.uid,
+  email: row.email,
+  nickname: row.nickname,
+  agreedToTerms: row.agreed_to_terms,
+  villageProfileCompleted: row.village_profile_completed,
+  stutterType: row.stutter_type,
+  stutterTypeOther: row.stutter_type_other,
+  difficultSoundsTop3: row.difficult_sounds_top3,
+  villagerNoNumeric: row.villager_no_numeric,
+  villagerNo: row.villager_no,
+  lastLoginAt: row.last_login_at,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+});
+
+export const createOrMergeUserProfile = async (uid, data) => {
+  const row = { uid };
+  if (data.nickname !== undefined) row.nickname = data.nickname;
+  if (data.agreedToTerms !== undefined) row.agreed_to_terms = data.agreedToTerms;
+  if (data.email !== undefined) row.email = data.email;
+  const { error } = await supabase.from('users').upsert(row, { onConflict: 'uid' });
+  if (error) throw error;
+};
+
 export const updateLastLoginAt = async (uid) => {
   try {
-    await setDoc(doc(db, 'users', uid), { lastLoginAt: serverTimestamp() }, { merge: true });
+    const { error } = await supabase
+      .from('users')
+      .upsert({ uid, last_login_at: new Date().toISOString() }, { onConflict: 'uid' });
+    if (error) throw error;
   } catch {
-    // onboarding前はドキュメント未作成のため無視
+    // onboarding 前はレコード未作成の場合があるため無視
   }
 };
 
-// 村人人数を集計して返す
-// - totalVillagers  : agreedToTerms=true かつ nickname が存在するユーザー数
-// - recentVillagers : 上記のうち lastLoginAt が直近7日以内のユーザー数
+export const getUserProfile = async (uid) => {
+  const { data } = await supabase.from('users').select('*').eq('uid', uid).single();
+  return data ? mapUser(data) : null;
+};
+
+// ============================================================
+// 村人統計
+// ============================================================
+
 export const getVillageStats = async () => {
-  // 7日前の Timestamp を作成
-  const sevenDaysAgo = Timestamp.fromMillis(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-  // 総村人数クエリ
-  const totalSnap = await getDocs(
-    query(
-      collection(db, 'users'),
-      where('agreedToTerms', '==', true),
-      where('nickname', '!=', '')
-    )
-  );
-
-  // 直近7日以内に訪れた村人クエリ
-  const recentSnap = await getDocs(
-    query(
-      collection(db, 'users'),
-      where('agreedToTerms', '==', true),
-      where('lastLoginAt', '>=', sevenDaysAgo)
-    )
-  );
-
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const [totalRes, recentRes] = await Promise.all([
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('agreed_to_terms', true)
+      .not('nickname', 'is', null)
+      .neq('nickname', ''),
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('agreed_to_terms', true)
+      .gte('last_login_at', sevenDaysAgo),
+  ]);
   return {
-    totalVillagers: totalSnap.size,
-    recentVillagers: recentSnap.size,
+    totalVillagers: totalRes.count ?? 0,
+    recentVillagers: recentRes.count ?? 0,
   };
 };
 
-// ユーザープロフィールの取得
-export const getUserProfile = async (uid) => {
-  const snap = await getDoc(doc(db, 'users', uid));
-  return snap.exists() ? snap.data() : null;
+// ============================================================
+// 広場：投稿
+// ============================================================
+
+const mapPost = (row) => ({
+  id: row.id,
+  text: row.text,
+  authorUid: row.author_uid,
+  authorName: row.author_name,
+  likeCount: row.like_count,
+  reportCount: row.report_count,
+  isHidden: row.is_hidden,
+  createdAt: row.created_at,
+});
+
+export const createPost = async ({ text, authorUid, authorName }) => {
+  const { error } = await supabase
+    .from('posts')
+    .insert({ text, author_uid: authorUid, author_name: authorName });
+  if (error) throw error;
 };
 
-// 投稿の作成
-export const createPost = ({ text, authorUid, authorName }) =>
-  addDoc(collection(db, 'posts'), {
-    text,
-    authorUid,
-    authorName,
-    createdAt: serverTimestamp(),
-    likeCount: 0,
-    reportCount: 0,
-    isHidden: false,
-  });
-
-// 表示可能な投稿をリアルタイム購読（非表示は除く・新しい順）
 export const subscribeVisiblePosts = (callback) => {
-  const q = query(
-    collection(db, 'posts'),
-    where('isHidden', '==', false),
-    orderBy('createdAt', 'desc')
-  );
-  return onSnapshot(q, (snap) => {
-    const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(posts);
-  });
+  const fetchPosts = async () => {
+    const { data } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('is_hidden', false)
+      .order('created_at', { ascending: false });
+    callback((data || []).map(mapPost));
+  };
+  fetchPosts();
+  const channel = supabase
+    .channel('visible-posts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
+    .subscribe();
+  return () => supabase.removeChannel(channel);
 };
 
-// 自分の投稿を削除
-export const deleteOwnPost = (postId) =>
-  deleteDoc(doc(db, 'posts', postId));
+export const deleteOwnPost = async (postId) => {
+  const { error } = await supabase.from('posts').delete().eq('id', postId);
+  if (error) throw error;
+};
 
-// いいねのトグル（トランザクションで整合性を保つ）
 export const toggleLike = async (postId, uid) => {
-  const likeId = `${postId}_${uid}`;
-  const likeRef = doc(db, 'postLikes', likeId);
-  const postRef = doc(db, 'posts', postId);
-
-  await runTransaction(db, async (tx) => {
-    const likeSnap = await tx.get(likeRef);
-    if (likeSnap.exists()) {
-      // 既にいいね済み → 取り消し
-      tx.delete(likeRef);
-      tx.update(postRef, { likeCount: increment(-1) });
-    } else {
-      // 未いいね → 追加
-      tx.set(likeRef, {
-        postId,
-        userUid: uid,
-        createdAt: serverTimestamp(),
-      });
-      tx.update(postRef, { likeCount: increment(1) });
-    }
+  const { data, error } = await supabase.rpc('toggle_post_like', {
+    p_post_id: postId,
+    p_user_uid: uid,
   });
+  if (error) throw error;
+  return data;
 };
 
-// 現在のユーザーがいいねしているか確認
 export const checkLiked = async (postId, uid) => {
-  const likeId = `${postId}_${uid}`;
-  const snap = await getDoc(doc(db, 'postLikes', likeId));
-  return snap.exists();
+  const { data } = await supabase
+    .from('post_likes')
+    .select('post_id')
+    .eq('post_id', postId)
+    .eq('user_uid', uid)
+    .maybeSingle();
+  return !!data;
 };
 
-// ========== 図書館：書評 ==========
+export const reportPost = async (postId, uid) => {
+  const { error } = await supabase.rpc('report_post', {
+    p_post_id: postId,
+    p_user_uid: uid,
+  });
+  if (error) {
+    if (error.message?.includes('already_reported')) throw new Error('already_reported');
+    if (error.message?.includes('post_not_found')) throw new Error('post_not_found');
+    throw error;
+  }
+};
 
-// 書評を投稿する
-export const createBookReview = ({ bookId, quote, feeling, authorUid, authorName }) =>
-  addDoc(collection(db, 'bookReviews'), {
-    bookId,
+// ============================================================
+// 図書館：書評
+// ============================================================
+
+const mapReview = (row) => ({
+  id: row.id,
+  bookId: row.book_id,
+  quote: row.quote,
+  feeling: row.feeling,
+  authorUid: row.author_uid,
+  authorName: row.author_name,
+  createdAt: row.created_at,
+});
+
+export const createBookReview = async ({ bookId, quote, feeling, authorUid, authorName }) => {
+  const { error } = await supabase.from('book_reviews').insert({
+    book_id: bookId,
     quote,
     feeling,
-    authorUid,
-    authorName,
-    createdAt: serverTimestamp(),
+    author_uid: authorUid,
+    author_name: authorName,
   });
-
-// 指定した本の書評をリアルタイム購読（新しい順）
-export const subscribeBookReviews = (bookId, callback) => {
-  const q = query(
-    collection(db, 'bookReviews'),
-    where('bookId', '==', bookId),
-    orderBy('createdAt', 'desc')
-  );
-  return onSnapshot(q, (snap) => {
-    const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(reviews);
-  });
+  if (error) throw error;
 };
 
-// 自分の書評を削除
-export const deleteOwnBookReview = (reviewId) =>
-  deleteDoc(doc(db, 'bookReviews', reviewId));
+export const subscribeBookReviews = (bookId, callback) => {
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from('book_reviews')
+      .select('*')
+      .eq('book_id', bookId)
+      .order('created_at', { ascending: false });
+    callback((data || []).map(mapReview));
+  };
+  fetchReviews();
+  const channel = supabase
+    .channel(`book-reviews-${bookId}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'book_reviews', filter: `book_id=eq.${bookId}` },
+      fetchReviews,
+    )
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+};
 
-// ========== 映画館：映画レビュー ==========
+export const deleteOwnBookReview = async (reviewId) => {
+  const { error } = await supabase.from('book_reviews').delete().eq('id', reviewId);
+  if (error) throw error;
+};
 
-// 映画レビューを投稿する
-export const createMovieReview = ({ movieId, scene, feeling, authorUid, authorName }) =>
-  addDoc(collection(db, 'movieReviews'), {
-    movieId,
+export const getMyBookReviews = async (uid) => {
+  const { data } = await supabase
+    .from('book_reviews')
+    .select('*')
+    .eq('author_uid', uid)
+    .order('created_at', { ascending: false });
+  return (data || []).map(mapReview);
+};
+
+// ============================================================
+// 映画館：映画レビュー
+// ============================================================
+
+const mapMovieReview = (row) => ({
+  id: row.id,
+  movieId: row.movie_id,
+  scene: row.scene,
+  feeling: row.feeling,
+  authorUid: row.author_uid,
+  authorName: row.author_name,
+  createdAt: row.created_at,
+});
+
+export const createMovieReview = async ({ movieId, scene, feeling, authorUid, authorName }) => {
+  const { error } = await supabase.from('movie_reviews').insert({
+    movie_id: movieId,
     scene,
     feeling,
-    authorUid,
-    authorName,
-    createdAt: serverTimestamp(),
+    author_uid: authorUid,
+    author_name: authorName,
   });
+  if (error) throw error;
+};
 
-// 指定した映画のレビューをリアルタイム購読（新しい順）
 export const subscribeMovieReviews = (movieId, callback) => {
-  const q = query(
-    collection(db, 'movieReviews'),
-    where('movieId', '==', movieId),
-    orderBy('createdAt', 'desc')
-  );
-  return onSnapshot(q, (snap) => {
-    const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(reviews);
-  });
-};
-
-// 自分の映画レビューを削除
-export const deleteOwnMovieReview = (reviewId) =>
-  deleteDoc(doc(db, 'movieReviews', reviewId));
-
-// ========== 自分の家 ==========
-
-// 自分が投稿した本のレビューを取得（新しい順）
-export const getMyBookReviews = async (uid) => {
-  const snap = await getDocs(
-    query(
-      collection(db, 'bookReviews'),
-      where('authorUid', '==', uid),
-      orderBy('createdAt', 'desc')
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from('movie_reviews')
+      .select('*')
+      .eq('movie_id', movieId)
+      .order('created_at', { ascending: false });
+    callback((data || []).map(mapMovieReview));
+  };
+  fetchReviews();
+  const channel = supabase
+    .channel(`movie-reviews-${movieId}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'movie_reviews', filter: `movie_id=eq.${movieId}` },
+      fetchReviews,
     )
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    .subscribe();
+  return () => supabase.removeChannel(channel);
 };
 
-// 自分が投稿した映画レビューを取得（新しい順）
+export const deleteOwnMovieReview = async (reviewId) => {
+  const { error } = await supabase.from('movie_reviews').delete().eq('id', reviewId);
+  if (error) throw error;
+};
+
 export const getMyMovieReviews = async (uid) => {
-  const snap = await getDocs(
-    query(
-      collection(db, 'movieReviews'),
-      where('authorUid', '==', uid),
-      orderBy('createdAt', 'desc')
-    )
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const { data } = await supabase
+    .from('movie_reviews')
+    .select('*')
+    .eq('author_uid', uid)
+    .order('created_at', { ascending: false });
+  return (data || []).map(mapMovieReview);
 };
 
-// できたことストックを投稿する
-export const createSelfEsteemStock = ({ text, authorUid }) =>
-  addDoc(collection(db, 'selfEsteemStocks'), {
-    text,
-    authorUid,
-    createdAt: serverTimestamp(),
-  });
+// ============================================================
+// 自分の家：できたことストック
+// ============================================================
 
-// 自分のできたことストックをリアルタイム購読（新しい順）
+const CROP_TYPES = ['carrot', 'potato', 'cabbage'];
+
+const mapStock = (row) => ({
+  id: row.id,
+  text: row.text,
+  crop: row.crop ?? 'carrot',
+  authorUid: row.author_uid,
+  createdAt: row.created_at,
+});
+
+export const createSelfEsteemStock = async ({ text, authorUid }) => {
+  const crop = CROP_TYPES[Math.floor(Math.random() * CROP_TYPES.length)];
+  const { error } = await supabase
+    .from('self_esteem_stocks')
+    .insert({ text, author_uid: authorUid, crop });
+  if (error) throw error;
+  await supabase.rpc('add_crop_to_inventory', { p_user_uid: authorUid, p_crop: crop });
+};
+
 export const subscribeMySelfEsteemStocks = (uid, callback) => {
-  const q = query(
-    collection(db, 'selfEsteemStocks'),
-    where('authorUid', '==', uid),
-    orderBy('createdAt', 'desc')
-  );
-  return onSnapshot(q, (snap) => {
-    const stocks = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(stocks);
-  });
+  const fetchStocks = async () => {
+    const { data } = await supabase
+      .from('self_esteem_stocks')
+      .select('*')
+      .eq('author_uid', uid)
+      .order('created_at', { ascending: false });
+    callback((data || []).map(mapStock));
+  };
+  fetchStocks();
+  const channel = supabase
+    .channel(`stocks-${uid}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'self_esteem_stocks',
+        filter: `author_uid=eq.${uid}`,
+      },
+      fetchStocks,
+    )
+    .subscribe();
+  return () => supabase.removeChannel(channel);
 };
 
-// できたことストックを削除（本人のみ）
-export const deleteMySelfEsteemStock = (stockId) =>
-  deleteDoc(doc(db, 'selfEsteemStocks', stockId));
+export const deleteMySelfEsteemStock = async (stockId) => {
+  const { error } = await supabase.from('self_esteem_stocks').delete().eq('id', stockId);
+  if (error) throw error;
+};
 
-// 通報（1ユーザー1回・reportCount>=3でisHidden化）
-export const reportPost = async (postId, uid) => {
-  const reportId = `${postId}_${uid}`;
-  const reportRef = doc(db, 'postReports', reportId);
-  const postRef = doc(db, 'posts', postId);
+// ============================================================
+// 農作物インベントリ
+// ============================================================
 
-  await runTransaction(db, async (tx) => {
-    const reportSnap = await tx.get(reportRef);
-    if (reportSnap.exists()) {
-      throw new Error('already_reported');
-    }
-    const postSnap = await tx.get(postRef);
-    if (!postSnap.exists()) {
-      throw new Error('post_not_found');
-    }
-    const newCount = (postSnap.data().reportCount || 0) + 1;
-
-    tx.set(reportRef, {
-      postId,
-      userUid: uid,
-      createdAt: serverTimestamp(),
+export const subscribeCropInventory = (uid, callback) => {
+  const fetch = async () => {
+    const { data } = await supabase
+      .from('crop_inventory')
+      .select('*')
+      .eq('user_uid', uid)
+      .maybeSingle();
+    callback({
+      carrot:  data?.carrot_count  ?? 0,
+      potato:  data?.potato_count  ?? 0,
+      cabbage: data?.cabbage_count ?? 0,
     });
-    tx.update(postRef, {
-      reportCount: newCount,
-      isHidden: newCount >= 3,
+  };
+  fetch();
+  const channel = supabase
+    .channel(`inventory-${uid}`)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'crop_inventory',
+      filter: `user_uid=eq.${uid}`,
+    }, fetch)
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+};
+
+// ============================================================
+// 広場：農作物ギフト
+// ============================================================
+
+export const subscribePostCropGifts = (callback) => {
+  const fetch = async () => {
+    const { data } = await supabase
+      .from('post_crop_gifts')
+      .select('post_id, crop');
+    const counts = {};
+    (data || []).forEach(({ post_id, crop }) => {
+      if (!counts[post_id]) counts[post_id] = { carrot: 0, potato: 0, cabbage: 0 };
+      counts[post_id][crop] = (counts[post_id][crop] || 0) + 1;
     });
+    callback(counts);
+  };
+  fetch();
+  const channel = supabase
+    .channel('post-crop-gifts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'post_crop_gifts' }, fetch)
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+};
+
+export const giveCropToPost = async (postId, giverUid, crop) => {
+  const { error } = await supabase.rpc('give_crop_to_post', {
+    p_post_id:   postId,
+    p_giver_uid: giverUid,
+    p_crop:      crop,
   });
+  if (error) {
+    if (error.message?.includes('not_enough_crops')) throw new Error('not_enough_crops');
+    throw error;
+  }
 };

@@ -50,11 +50,11 @@ const FACILITIES = [
     position: { top: '73%', left: '78%' },
   },
   {
-    id: 'town-hall',
+    id: 'village-office',
     label: '村役場',
-    path: '/town-hall',
+    path: '/village-office',
     enabled: true,
-    spotClass: 'town-hall-button',
+    spotClass: 'village-office-button',
     position: { top: '40%', left: '63%' },
   },
   {

@@ -1,28 +1,20 @@
-import { doc, getDoc, serverTimestamp, runTransaction, increment } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { supabase } from '../supabase/client';
 
 export const toggleDesertWater = async (storyId: string, userUid: string): Promise<boolean> => {
-  const waterId = `${userUid}_${storyId}`;
-  const waterRef = doc(db, 'desertStoryWaters', waterId);
-  const storyRef = doc(db, 'desertStories', storyId);
-
-  let watered = false;
-  await runTransaction(db, async (tx) => {
-    const waterSnap = await tx.get(waterRef);
-    if (waterSnap.exists()) {
-      tx.delete(waterRef);
-      tx.update(storyRef, { waterCount: increment(-1) });
-      watered = false;
-    } else {
-      tx.set(waterRef, { userUid, storyId, createdAt: serverTimestamp() });
-      tx.update(storyRef, { waterCount: increment(1) });
-      watered = true;
-    }
+  const { data, error } = await supabase.rpc('toggle_desert_water', {
+    p_story_id: storyId,
+    p_user_uid: userUid,
   });
-  return watered;
+  if (error) throw error;
+  return data as boolean;
 };
 
 export const checkWatered = async (storyId: string, userUid: string): Promise<boolean> => {
-  const snap = await getDoc(doc(db, 'desertStoryWaters', `${userUid}_${storyId}`));
-  return snap.exists();
+  const { data } = await supabase
+    .from('desert_story_waters')
+    .select('story_id')
+    .eq('story_id', storyId)
+    .eq('user_uid', userUid)
+    .maybeSingle();
+  return !!data;
 };

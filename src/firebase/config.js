@@ -1,8 +1,7 @@
-// Firebase の初期化ファイル
-// Firebase コンソールから取得した設定値をここに入力してください
+// Firebase の初期化（認証のみ）
+// データベースは Supabase に移行済み
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,4 +15,3 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);

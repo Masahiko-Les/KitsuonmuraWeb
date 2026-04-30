@@ -24,6 +24,137 @@
   text-align: center;
 }
 
+/* ── 家の画像マップ ── */
+.home-map-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(74, 55, 40, 0.15);
+  user-select: none;
+}
+
+.home-map-image {
+  width: 100%;
+  display: block;
+  user-select: none;
+}
+
+.home-map-btn {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  background-color: rgba(200, 149, 108, 0.92);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.home-map-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
+}
+
+.home-map-label {
+  font-size: 13px;
+}
+
+/* ── 勉強机カード ── */
+.home-desk-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-desk-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.home-desk-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  min-width: 110px;
+  padding-top: 1px;
+}
+
+.home-desk-value {
+  font-size: 13px;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.home-desk-sounds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.home-desk-badge {
+  background: #fff8f2;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 10px;
+  font-size: 13px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+/* ── 家庭菜園：農作物カウント ── */
+.garden-harvest-grid {
+  display: flex;
+  gap: 8px;
+}
+
+.garden-harvest-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #f6f9f0;
+  border: 1.5px solid #c8dba0;
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+}
+
+.garden-harvest-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.garden-harvest-count {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.garden-harvest-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.stock-crop-emoji {
+  margin-right: 6px;
+}
+
 .home-main {
   flex: 1;
   padding: 20px 16px;

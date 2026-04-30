@@ -1,56 +1,36 @@
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  serverTimestamp,
-  runTransaction,
-  increment,
-} from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { supabase } from '../supabase/client';
 import { DesertStory } from '../types/desertStory';
+import { mapStory } from './desertStoryService';
 
 export const toggleDesertFavorite = async (storyId: string, userUid: string): Promise<boolean> => {
-  const favId = `${userUid}_${storyId}`;
-  const favRef = doc(db, 'desertStoryFavorites', favId);
-  const storyRef = doc(db, 'desertStories', storyId);
-
-  let favorited = false;
-  await runTransaction(db, async (tx) => {
-    const favSnap = await tx.get(favRef);
-    if (favSnap.exists()) {
-      tx.delete(favRef);
-      tx.update(storyRef, { favoriteCount: increment(-1) });
-      favorited = false;
-    } else {
-      tx.set(favRef, { userUid, storyId, createdAt: serverTimestamp() });
-      tx.update(storyRef, { favoriteCount: increment(1) });
-      favorited = true;
-    }
+  const { data, error } = await supabase.rpc('toggle_desert_favorite', {
+    p_story_id: storyId,
+    p_user_uid: userUid,
   });
-  return favorited;
+  if (error) throw error;
+  return data as boolean;
 };
 
 export const checkFavorited = async (storyId: string, userUid: string): Promise<boolean> => {
-  const snap = await getDoc(doc(db, 'desertStoryFavorites', `${userUid}_${storyId}`));
-  return snap.exists();
+  const { data } = await supabase
+    .from('desert_story_favorites')
+    .select('story_id')
+    .eq('story_id', storyId)
+    .eq('user_uid', userUid)
+    .maybeSingle();
+  return !!data;
 };
 
 export const getMyFavoriteStories = async (userUid: string): Promise<DesertStory[]> => {
-  const snap = await getDocs(
-    query(
-      collection(db, 'desertStoryFavorites'),
-      where('userUid', '==', userUid),
-    ),
-  );
-  const storyIds = snap.docs.map((d) => d.data().storyId as string);
-  const fetched = await Promise.all(
-    storyIds.map((id) => getDoc(doc(db, 'desertStories', id))),
-  );
-  return fetched
-    .filter((s) => s.exists())
-    .map((s) => ({ id: s.id, ...s.data() } as DesertStory))
+  // desert_story_favorites と desert_stories を JOIN して一括取得
+  const { data } = await supabase
+    .from('desert_story_favorites')
+    .select('story_id, desert_stories!inner(*)')
+    .eq('user_uid', userUid);
+
+  if (!data) return [];
+
+  return (data as unknown[])
+    .map((row: unknown) => mapStory((row as Record<string, unknown>).desert_stories as Record<string, unknown>))
     .filter((s) => !s.isDeleted && s.status === 'published' && !s.blockedByModeration);
 };

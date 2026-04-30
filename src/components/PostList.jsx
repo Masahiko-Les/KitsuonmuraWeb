@@ -1,21 +1,28 @@
-// 投稿一覧を表示するコンポーネント
 import { useState, useEffect } from 'react';
-import { subscribeVisiblePosts } from '../firebase/firestore';
+import { subscribeVisiblePosts, subscribePostCropGifts, subscribeCropInventory } from '../firebase/firestore';
+import { useAuth } from '../hooks/useAuth';
 import PostCard from './PostCard';
 import '../styles/PostList.css';
 
+const EMPTY_INVENTORY = { carrot: 0, potato: 0, cabbage: 0 };
+
 const PostList = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { currentUser } = useAuth();
+  const [posts, setPosts]           = useState([]);
+  const [giftCounts, setGiftCounts] = useState({});
+  const [inventory, setInventory]   = useState(EMPTY_INVENTORY);
+  const [loading, setLoading]       = useState(true);
 
   useEffect(() => {
-    // リアルタイムで投稿を購読
-    const unsubscribe = subscribeVisiblePosts((data) => {
-      setPosts(data);
-      setLoading(false);
-    });
-    return unsubscribe;
+    const unsub1 = subscribeVisiblePosts((data) => { setPosts(data); setLoading(false); });
+    const unsub2 = subscribePostCropGifts(setGiftCounts);
+    return () => { unsub1(); unsub2(); };
   }, []);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    return subscribeCropInventory(currentUser.uid, setInventory);
+  }, [currentUser]);
 
   if (loading) return <p className="loading-text">投稿を読み込んでいます...</p>;
 
@@ -31,7 +38,12 @@ const PostList = () => {
   return (
     <div className="post-list">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard
+          key={post.id}
+          post={post}
+          giftCounts={giftCounts[post.id] || EMPTY_INVENTORY}
+          inventory={inventory}
+        />
       ))}
     </div>
   );

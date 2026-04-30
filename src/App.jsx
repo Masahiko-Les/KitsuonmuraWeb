@@ -99,7 +99,7 @@ const App = () => (
           element={<ProtectedRoute><HomePage /></ProtectedRoute>}
         />
         <Route
-          path="/town-hall"
+          path="/village-office"
           element={<ProtectedRoute><TownHallPage /></ProtectedRoute>}
         />
 

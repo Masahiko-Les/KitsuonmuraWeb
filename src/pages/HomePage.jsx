@@ -1,4 +1,3 @@
-// 自分の家：読んだ本・見た映画・できたことストックを振り返る場所
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -8,6 +7,7 @@ import {
   createSelfEsteemStock,
   subscribeMySelfEsteemStocks,
   deleteMySelfEsteemStock,
+  subscribeCropInventory,
 } from '../firebase/firestore';
 import { BOOKS } from './LibraryPage';
 import { MOVIES } from './CinemaPage';
@@ -16,22 +16,21 @@ import '../styles/HomePage.css';
 
 const MAX_STOCK_LENGTH = 200;
 
-// bookId → タイトルの変換
-const getBookTitle = (bookId) =>
-  BOOKS.find((b) => b.id === bookId)?.title ?? bookId;
+const ROOMS = [
+  { id: 'bookshelf', label: '本棚',          icon: '📚', position: { top: '36%', left: '68%' } },
+  { id: 'projector', label: 'プロジェクター', icon: '🎬', position: { top: '44%', left: '26%' } },
+  { id: 'desk',      label: '勉強机',         icon: '📝', position: { top: '56%', left: '74%' } },
+  { id: 'garden',    label: '家庭菜園',       icon: '🌱', position: { top: '82%', left: '48%' } },
+];
 
-// movieId → タイトルの変換
-const getMovieTitle = (movieId) =>
-  MOVIES.find((m) => m.id === movieId)?.title ?? movieId;
+const getBookTitle  = (id) => BOOKS.find((b) => b.id === id)?.title  ?? id;
+const getMovieTitle = (id) => MOVIES.find((m) => m.id === id)?.title ?? id;
 
-// 日時フォーマット
 const formatDate = (ts) => {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' });
 };
-
-// ---- サブコンポーネント ----
 
 const BookRecordCard = ({ review }) => (
   <li className="home-card">
@@ -71,9 +70,20 @@ const MovieRecordCard = ({ review }) => (
   </li>
 );
 
+const CROPS = [
+  { key: 'carrot',  emoji: '🥕', label: 'ニンジン' },
+  { key: 'potato',  emoji: '🥔', label: 'ジャガイモ' },
+  { key: 'cabbage', emoji: '🥬', label: 'キャベツ' },
+];
+
+const cropEmoji = (key) => CROPS.find((c) => c.key === key)?.emoji ?? '🥕';
+
 const StockCard = ({ stock, onDelete }) => (
   <li className="home-card stock-card">
-    <p className="stock-text">{stock.text}</p>
+    <p className="stock-text">
+      <span className="stock-crop-emoji">{cropEmoji(stock.crop)}</span>
+      {stock.text}
+    </p>
     <div className="stock-footer">
       <span className="home-card-date">{formatDate(stock.createdAt)}</span>
       <button className="stock-delete-btn" onClick={() => onDelete(stock.id)}>削除</button>
@@ -81,21 +91,19 @@ const StockCard = ({ stock, onDelete }) => (
   </li>
 );
 
-// ---- メインページ ----
-
 const HomePage = () => {
   const { currentUser, userProfile } = useAuth();
   const navigate = useNavigate();
 
-  const [bookReviews, setBookReviews] = useState([]);
+  const [bookReviews, setBookReviews]   = useState([]);
   const [movieReviews, setMovieReviews] = useState([]);
-  const [stocks, setStocks] = useState([]);
-  const [stockText, setStockText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [stockError, setStockError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [stocks, setStocks]             = useState([]);
+  const [inventory, setInventory]       = useState({ carrot: 0, potato: 0, cabbage: 0 });
+  const [stockText, setStockText]       = useState('');
+  const [submitting, setSubmitting]     = useState(false);
+  const [stockError, setStockError]     = useState('');
+  const [loading, setLoading]           = useState(true);
 
-  // 本・映画レビューを取得（一回だけ）
   useEffect(() => {
     if (!currentUser) return;
     Promise.all([
@@ -111,12 +119,16 @@ const HomePage = () => {
     });
   }, [currentUser]);
 
-  // できたことストックをリアルタイム購読
   useEffect(() => {
     if (!currentUser) return;
-    const unsubscribe = subscribeMySelfEsteemStocks(currentUser.uid, setStocks);
-    return unsubscribe;
+    const unsub1 = subscribeMySelfEsteemStocks(currentUser.uid, setStocks);
+    const unsub2 = subscribeCropInventory(currentUser.uid, setInventory);
+    return () => { unsub1(); unsub2(); };
   }, [currentUser]);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleStockSubmit = async (e) => {
     e.preventDefault();
@@ -149,52 +161,91 @@ const HomePage = () => {
     }
   };
 
+  const v = userProfile;
+
   return (
     <div className="page-container">
       <header className="home-header">
         <button className="back-btn" onClick={() => navigate('/village')}>← 村へ戻る</button>
         <h1>自分の家</h1>
-        {userProfile && <p className="home-username">{userProfile.nickname} さんの家</p>}
-        <p className="home-desc">
-          ここは、自分の歩みを静かに置いておける場所です。<br />
-          読んだ本、見た映画、できたことを少しずつ残していけます。
-        </p>
+        {v && <p className="home-username">{v.nickname} さんの家</p>}
       </header>
+
+      {/* ── 家の画像 + 部屋ボタン ── */}
+      <div className="home-map-wrapper">
+        <img src="/myhome.png" alt="自分の家" className="home-map-image" draggable={false} />
+        {ROOMS.map((room) => (
+          <button
+            key={room.id}
+            className="home-map-btn"
+            style={room.position}
+            onClick={() => scrollTo(room.id)}
+          >
+            <span className="home-map-label">{room.label}</span>
+          </button>
+        ))}
+      </div>
 
       <main className="home-main">
 
-        {/* ── 読んだ本 ── */}
-        <section className="home-section">
-          <h2 className="home-section-title">📚 読んだ本</h2>
-          {loading ? (
-            <p className="home-empty">読み込み中...</p>
-          ) : bookReviews.length === 0 ? (
-            <p className="home-empty">まだ本の記録はありません</p>
+        {/* ── 勉強机 ── */}
+        <section id="desk" className="home-section">
+          <h2 className="home-section-title">📝 勉強机</h2>
+          {v ? (
+            <div className="home-desk-card">
+              <div className="home-desk-row">
+                <span className="home-desk-label">ニックネーム</span>
+                <span className="home-desk-value">{v.nickname}</span>
+              </div>
+              <div className="home-desk-row">
+                <span className="home-desk-label">村人番号</span>
+                <span className="home-desk-value">{v.villagerNo ?? '—'}</span>
+              </div>
+              <div className="home-desk-row">
+                <span className="home-desk-label">メールアドレス</span>
+                <span className="home-desk-value">{v.email ?? '—'}</span>
+              </div>
+              {v.stutterType && (
+                <div className="home-desk-row">
+                  <span className="home-desk-label">吃音タイプ</span>
+                  <span className="home-desk-value">
+                    {v.stutterType === 'その他' && v.stutterTypeOther
+                      ? `その他（${v.stutterTypeOther}）`
+                      : v.stutterType}
+                  </span>
+                </div>
+              )}
+              {v.difficultSoundsTop3?.length > 0 && (
+                <div className="home-desk-row">
+                  <span className="home-desk-label">発声しにくい音</span>
+                  <div className="home-desk-sounds">
+                    {v.difficultSoundsTop3.map((s, i) => (
+                      <span key={i} className="home-desk-badge">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
-            <ul className="home-card-list">
-              {bookReviews.map((r) => <BookRecordCard key={r.id} review={r} />)}
-            </ul>
+            <p className="home-empty">プロフィール情報がありません</p>
           )}
         </section>
 
-        {/* ── 見た映画 ── */}
-        <section className="home-section">
-          <h2 className="home-section-title">🎥 見た映画</h2>
-          {loading ? (
-            <p className="home-empty">読み込み中...</p>
-          ) : movieReviews.length === 0 ? (
-            <p className="home-empty">まだ映画の記録はありません</p>
-          ) : (
-            <ul className="home-card-list">
-              {movieReviews.map((r) => <MovieRecordCard key={r.id} review={r} />)}
-            </ul>
-          )}
-        </section>
+        {/* ── 家庭菜園 ── */}
+        <section id="garden" className="home-section">
+          <h2 className="home-section-title">🌱 家庭菜園</h2>
+          <p className="home-section-desc">できたことを残すと、農作物が1つ手に入ります</p>
 
-        {/* ── できたことストック ── */}
-        <section className="home-section">
-          <h2 className="home-section-title">🌱 できたことストック</h2>
-          <p className="home-section-desc">今日できたこと、がんばれたことを小さく残しておきましょう</p>
+          {/* 農作物カウント（手持ちの在庫） */}
+          <div className="garden-harvest-grid">
+            {CROPS.map((crop) => (
+              <div key={crop.key} className="garden-harvest-item">
+                <span className="garden-harvest-icon">{crop.emoji}</span>
+                <span className="garden-harvest-count">{inventory[crop.key]}</span>
+                <span className="garden-harvest-label">{crop.label}</span>
+              </div>
+            ))}
+          </div>
 
           <form className="stock-form" onSubmit={handleStockSubmit}>
             <textarea
@@ -214,7 +265,7 @@ const HomePage = () => {
                 className="btn-primary"
                 disabled={submitting || !stockText.trim()}
               >
-                {submitting ? '保存中...' : '残す'}
+                {submitting ? '保存中...' : '残す +🥕'}
               </button>
             </div>
             {stockError && <p className="form-error">{stockError}</p>}
@@ -227,6 +278,34 @@ const HomePage = () => {
               {stocks.map((s) => (
                 <StockCard key={s.id} stock={s} onDelete={handleStockDelete} />
               ))}
+            </ul>
+          )}
+        </section>
+
+        {/* ── 本棚 ── */}
+        <section id="bookshelf" className="home-section">
+          <h2 className="home-section-title">📚 本棚</h2>
+          {loading ? (
+            <p className="home-empty">読み込み中...</p>
+          ) : bookReviews.length === 0 ? (
+            <p className="home-empty">まだ本の記録はありません</p>
+          ) : (
+            <ul className="home-card-list">
+              {bookReviews.map((r) => <BookRecordCard key={r.id} review={r} />)}
+            </ul>
+          )}
+        </section>
+
+        {/* ── プロジェクター ── */}
+        <section id="projector" className="home-section">
+          <h2 className="home-section-title">🎬 プロジェクター</h2>
+          {loading ? (
+            <p className="home-empty">読み込み中...</p>
+          ) : movieReviews.length === 0 ? (
+            <p className="home-empty">まだ映画の記録はありません</p>
+          ) : (
+            <ul className="home-card-list">
+              {movieReviews.map((r) => <MovieRecordCard key={r.id} review={r} />)}
             </ul>
           )}
         </section>
