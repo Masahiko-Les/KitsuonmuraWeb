@@ -60,8 +60,8 @@ const FACILITIES = [
   {
     id: 'lighthouse',
     label: '灯台',
-    path: null,
-    enabled: false,
+    path: '/lighthouse',
+    enabled: true,
     spotClass: 'lighthouse-button',
     position: { top: '50%', left: '10%' },
   },

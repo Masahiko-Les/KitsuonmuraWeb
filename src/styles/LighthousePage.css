@@ -1,0 +1,258 @@
+.lh-header {
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lh-header h1 {
+  font-size: 20px;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 6px 0 2px;
+}
+
+.lh-desc {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.lh-main {
+  flex: 1;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* 期間バナー */
+.lh-period-banner {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lh-period-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.lh-period-desc {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* セクション */
+.lh-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lh-section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--color-text);
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--color-border);
+}
+
+/* フォーム */
+.lh-form {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lh-form-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.lh-textarea {
+  width: 100%;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  resize: none;
+  outline: none;
+  transition: border 0.2s;
+  line-height: 1.7;
+  box-sizing: border-box;
+}
+
+.lh-textarea:focus {
+  border-color: var(--color-primary);
+  background: #fff;
+}
+
+.lh-textarea::placeholder {
+  color: #bba99a;
+}
+
+.lh-form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lh-char-count {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* 自分のカード */
+.lh-my-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.lh-result-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lh-waiting {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* みんなのカード */
+.lh-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lh-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lh-card.has-result {
+  border-left: 4px solid #7fc47f;
+}
+
+.lh-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.lh-card-author {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.lh-card-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.lh-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lh-card-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+
+.lh-card-text {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.lh-result-block {
+  background: #f6f9f0;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  gap: 6px;
+}
+
+.lh-result-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* 農作物ギフト */
+.lh-crop-row {
+  display: flex;
+  gap: 6px;
+}
+
+.lh-crop-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 4px 10px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.45;
+}
+
+.lh-crop-btn.can-give {
+  opacity: 1;
+}
+
+.lh-crop-btn.can-give:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: #fff8f2;
+  transform: scale(1.08);
+}
+
+.lh-crop-btn:disabled {
+  cursor: default;
+}
+
+.lh-crop-count {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  min-width: 12px;
+}
+
+.lh-empty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  padding: 16px 0;
+  text-align: center;
+  line-height: 1.8;
+}

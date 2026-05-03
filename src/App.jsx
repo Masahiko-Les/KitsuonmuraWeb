@@ -21,6 +21,7 @@ import DesertFavoritesPage from './pages/DesertFavoritesPage';
 import HomePage from './pages/HomePage';
 import VillageRegistrationPage from './pages/VillageRegistrationPage';
 import TownHallPage from './pages/TownHallPage';
+import LighthousePage from './pages/LighthousePage';
 
 const App = () => (
   <AuthProvider>
@@ -101,6 +102,10 @@ const App = () => (
         <Route
           path="/village-office"
           element={<ProtectedRoute><TownHallPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/lighthouse"
+          element={<ProtectedRoute><LighthousePage /></ProtectedRoute>}
         />
 
         {/* その他のパスはトップへ */}
